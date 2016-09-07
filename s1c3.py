@@ -1,15 +1,12 @@
 import crypto
 import sys
-import string
-import base64
 import binascii
 
 in_string = sys.argv[1]
-for byte in range(0,255):
-    xor_result = str(crypto.xor(in_string.encode(), base64.b16encode(bytes([byte]))), 'utf-8')
-    print(str(xor_result))
+for byte in range(0,256):
+    xor_result = crypto.xor(bytearray(binascii.a2b_hex(in_string)), bytearray([byte]))
     score = crypto.score_plaintext(xor_result)
-    print(str(byte) + ':' + str(score))
     if score > 1:
-        print(xor_result)
+        print(in_string + " bytekey:" + str(byte) + " score:" + str(score))
+        print(bytes(xor_result).decode())
 
