@@ -1,18 +1,13 @@
 from base64 import b64encode,b16decode,b16encode
 import binascii
-import struct
-import pdb
 from wordscore import PlaintextScore
 
 def h2ba(hexstring):
     '''
     Convert given hex string to bytearray
 
-    Arguments:
-    hexstring = string
-
-    Returns:
-    bytearray
+    ;param hexstring: string
+    ;return: bytearray
     '''
     return bytearray(binascii.a2b_hex(hexstring))
 
@@ -20,11 +15,8 @@ def b2base64(barray):
     '''
     Take given bytearray and return it as a base64 string
 
-    Arguments:
-    barray = bytearray()
-
-    Returns:
-    string
+    ;param barray: bytearray
+    ;return: string
     '''
     return b64encode(barray).decode()
 
@@ -32,11 +24,8 @@ def b2base16(barray):
     '''
     Take given bytearray and return it as a base16 string
 
-    Arguments:
-    barray = bytearray()
-
-    Returns:
-    string
+    ;param barray: bytearray
+    ;return: string
     '''
     return b16encode(barray).decode()
 
@@ -47,12 +36,9 @@ def xor(barray1, barray2):
     bytearray, then repeat bytearray2 to the proper
     length.
 
-    Arguments:
-    barray1 = bytearray()
-    barray2 = bytearray()
-
-    Returns:
-    byterray
+    ;param barray1: bytearray
+    ;param barray2: bytearray
+    ;return: byterray
     '''
 
     result = []
@@ -67,19 +53,42 @@ def xor(barray1, barray2):
 
 def score_plaintext(text):
     '''
-    Given a bytestring, return the possibility that
+    Given a bytearray, return the possibility that
     the string is actually plaintext.
 
     The more positive the score, the more likely
-    that the bytestring is plaintext.  Likewise, the
+    that the bytearray is plaintext.  Likewise, the
     more negative the score, the less likely that
-    the bytestring is plaintext.
+    the bytearray is plaintext.
 
-    Arguments:
-    text = bytes()
-
-    Returns:
-    int
+    ;param text: bytearray
+    ;return int
     '''
-    text_scorer = PlaintextScore()
-    return text_scorer.score(text)
+    text_scorer = PlaintextScore(text)
+    return text_scorer.score()
+
+def histogram_score_plaintext(text):
+    '''
+    Given a bytearray, calculate the distance from our base histogram
+
+    ;param text: bytearray
+    ;return: int
+    '''
+    text_scorer = PlaintextScore(text)
+    return text_scorer.histogram_score(text_scorer.get_histogram())
+
+def edit_distance(a, b):
+    '''
+    Given two byte arrays, find the number of differing bits
+
+    :param a: bytearray
+    :param b: bytearray
+    :return: int
+    '''
+    distance = 0
+    for i in range(0,len(a)):
+        for mask in [1, 2, 4, 8, 16, 32, 64, 128]:
+            a_bit = a[i] & mask
+            b_bit = b[i] & mask
+            if (a_bit ^ b_bit): distance += 1
+    return distance

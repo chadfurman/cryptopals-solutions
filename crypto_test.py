@@ -1,16 +1,10 @@
-import sys
-sys.path.append('../')
-
-import crypto
 import unittest
-import binascii
-import base64
-import pdb
+import crypto
+
 
 class TestCryptoMethods(unittest.TestCase):
     def test_h2ba(self):
         base16= "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"
-        babase16 = bytearray(binascii.a2b_hex(base16))
         self.assertEqual(type(crypto.h2ba(base16)), bytearray)
 
     def test_b2base64(self):
@@ -30,6 +24,11 @@ class TestCryptoMethods(unittest.TestCase):
         output = crypto.h2ba("1d0010011e000001071b034a52525108191d")
         self.assertEqual(crypto.xor(bytes1, bytes2), output)
 
+    def test_edit_distance(self):
+        self.assertEqual(crypto.edit_distance(bytearray([1]), bytearray([2])), 2)
+        self.assertEqual(crypto.edit_distance(bytearray("this is a test".encode()), bytearray("wokka wokka!!!".encode())), 37)
+
 
 if __name__ == '__main__':
     unittest.main()
+
